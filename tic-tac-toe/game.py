@@ -52,18 +52,27 @@ class Computer:
         self.valid_states = [0.5, 0.75, 0.9]
         # This weights correspond to unused normal, border and center
 
-    def check_enemy(self):
+    def check_victory(self, symbol):
 
         # Find if the player can win with the next move, if so block it
         for i, row in enumerate(BOARD):
             # If there are two positions used by player and there is a position empty
-            if row.count(self.enemy) == 2 and row.__contains__(' '):
+            if row.count(symbol) == 2 and row.__contains__(' '):
                 return (i, row.index(' '))
 
         for i, col in enumerate(list(zip(*BOARD))):
             # If there are two positions used by player and there is a position empty
-            if col.count(self.enemy) == 2 and col.__contains__(' '):
+            if col.count(symbol) == 2 and col.__contains__(' '):
                 return (col.index(' '), i)
+
+        diagonal = [BOARD[n][n] for n in range(len(BOARD))]
+        inversed = [BOARD[n][2-n] for n in range(len(BOARD))]
+
+        if diagonal.count(symbol) == 2 and diagonal.__contains__(' '):
+            return (diagonal.index(' '), diagonal.index(' '))
+
+        if inversed.count(symbol) == 2 and inversed.__contains__(' '):
+            return (diagonal.index(' '), 2 - diagonal.index(' '))
 
         return None
 
@@ -124,7 +133,8 @@ class Computer:
         # Select the row with the highest weight
         best_row = total_weights.index( max(total_weights) )
 
-        best_weight = max([ item for item in states[best_row] if item in self.valid_states])
+        weights = [item for item in states[best_row] if item in self.valid_states]
+        best_weight = max(weights) if len(weights) > 0 else 0
 
         best_block = states[best_row].index(best_weight)
 
@@ -144,11 +154,15 @@ class Computer:
 
     def make_move(self):
         # This function will evaluate the board and make the best possible move
-        pos = e.check_enemy()
+        computer = self.check_victory(self.symbol)
+        opponent = self.check_victory(self.enemy)
 
-        # If enemy can win on the next move, block it
-        if pos is not None:
-            BOARD[pos[0]][pos[1]] = e.symbol
+        if computer is not None:
+            # If computer can win on the next move, use it
+            BOARD[computer[0]][computer[1]] = self.symbol
+        elif opponent is not None:
+            # If enemy can win on the next move, block it
+            BOARD[opponent[0]][opponent[1]] = self.symbol
         else:
             # Select the most optimal position
             # I will establish priority position by giving weights to each position
@@ -235,11 +249,13 @@ if __name__ == '__main__':
 
         # Order of the moves
         if first:
+            print("Your move")
             player.make_move()
             e.make_move()
         else:
             e.make_move()
             gameboard()
+            print("Your move")
             player.make_move()
 
         counter = counter + 1
