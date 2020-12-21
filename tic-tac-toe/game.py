@@ -237,25 +237,40 @@ if __name__ == '__main__':
 
         print(f'---- Turn {counter} ----')
 
-        gameboard()
-
-        if BOARD[0].count(' ') + BOARD[1].count(' ') + BOARD[2].count(' ') == 0:
-            print("There are no more available positions, it's a draw.")
-            break
-
-        if evaluate_board(e):
-            print(f'{e.name} Wins!')
-            break
-
         # Order of the moves
         if first:
             print("Your move")
+            gameboard()
             player.make_move()
+            if BOARD[0].count(' ') + BOARD[1].count(' ') + BOARD[2].count(' ') == 0:
+                print("There are no more available positions, it's a draw.")
+                break
+            if evaluate_board(e):
+                print(f'{e.name} Wins!')
+                break
             e.make_move()
+            if BOARD[0].count(' ') + BOARD[1].count(' ') + BOARD[2].count(' ') == 0:
+                print("There are no more available positions, it's a draw.")
+                break
+            if evaluate_board(e):
+                print(f'{e.name} Wins!')
+                break
         else:
             e.make_move()
+            if BOARD[0].count(' ') + BOARD[1].count(' ') + BOARD[2].count(' ') == 0:
+                print("There are no more available positions, it's a draw.")
+                break
+            if evaluate_board(e):
+                print(f'{e.name} Wins!')
+                break
             gameboard()
             print("Your move")
             player.make_move()
+            if BOARD[0].count(' ') + BOARD[1].count(' ') + BOARD[2].count(' ') == 0:
+                print("There are no more available positions, it's a draw.")
+                break
+            if evaluate_board(e):
+                print(f'{e.name} Wins!')
+                break
 
         counter = counter + 1
