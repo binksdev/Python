@@ -1,8 +1,16 @@
+# Path Libraries
+import os
 # Data Processing Libraries
 import pandas as pd
 import numpy as np
 # Data Visualization Libraries
 import matplotlib.pyplot as plt
+
+# Graph Options
+OPTION = 0 # Set 1 for display, set 0 for image generation
+
+# Path settings
+PATH = os.path.join(os.getcwd(), 'images')
 
 def visualize_by_condition(content:pd.DataFrame):
     index_p = [1.0, 2.0]
@@ -24,14 +32,21 @@ def visualize_by_condition(content:pd.DataFrame):
 
         plt.xticks([1.1, 2.1], ['Yes', 'No'])
 
-        plt.xlabel(f'Suffer from {condition}')
+        plt.xlabel(f'Suffer from {condition.title()}')
         plt.ylabel('No. of Cases')
 
-        plt.title(f'Cases of {condition} in people with diabetes')
+        plt.title(f'Cases of {condition.title()} in people with diabetes')
 
         ax.legend()
 
-        plt.show()
+        if OPTION == 1:
+            plt.show() # Enable for display
+
+        elif OPTION == 0:
+            plt.savefig(f'{PATH}/{condition.title()}.png', bbox_inches='tight') # Enable for saving as image
+
+        else:
+            pass
 
 def grouped_by_age(content:pd.DataFrame):
 
@@ -59,7 +74,14 @@ def grouped_by_age(content:pd.DataFrame):
 
     plt.legend()
 
-    plt.show()
+    if OPTION == 1:
+        plt.show() # Enable for display
+
+    elif OPTION == 0:
+        plt.savefig(f'{PATH}/Age.png', bbox_inches='tight') # Enable for saving as image
+
+    else:
+        pass
 
 def grouped_by_gender(content:pd.DataFrame):
 
@@ -86,13 +108,25 @@ def grouped_by_gender(content:pd.DataFrame):
 
     plt.title("Gender ratio for diabetes cases")
 
-    plt.show()
+    if OPTION == 1:
+        plt.show() # Enable for display
+
+    elif OPTION == 0:
+        plt.savefig(f'{PATH}/Gender.png', bbox_inches='tight') # Enable for saving as image
+
+    else:
+        pass
 
 if __name__ == '__main__':
+
+    # If folder for images does not exists, create it
+    if not os.path.isdir(PATH):
+        os.mkdir(PATH)
+
     content = pd.read_csv('diabetes_data_upload.csv')
 
     # Visualize if there is any correlation between the afflictions and diabetes
-    # visualize_by_condition(content)
+    visualize_by_condition(content)
 
     content['has_diabetes'] = [1 if person == 'Positive' else 0 for person in content['class']]
 
@@ -100,6 +134,6 @@ if __name__ == '__main__':
     age_group = content[['has_diabetes', 'Age']]
     gen_group = content[['has_diabetes', 'Gender']]
 
-    # grouped_by_age(age_group)
+    grouped_by_age(age_group)
     
-    # grouped_by_gender(gen_group)
+    grouped_by_gender(gen_group)
