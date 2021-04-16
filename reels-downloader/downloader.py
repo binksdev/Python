@@ -1,6 +1,7 @@
 import sys
 import os
 from requests_html import HTMLSession, HTML
+from requests.exceptions import RequestException
 
 # FOLDER PATH
 CW_FOLDER   = os.getcwd()
@@ -27,20 +28,27 @@ if len(sys.argv[1:]) == 2:
 
         video_url = meta_video.attrs["content"]
 
-        video_response = SESSION.get(video_url, stream=True)
+        try:
 
-        if video_response.headers['Content-Type'] == 'video/mp4':
-            total = 0
+            video_response = SESSION.get(video_url, stream=True)
 
-            video_name = os.path.join(REEL_FOLDER, f"{sys.argv[2]}.mp4")
+            if video_response.headers['Content-Type'] == 'video/mp4':
+                total = 0
 
-            with open(video_name, 'wb') as video:
-                for chunk in video_response.iter_content(chunk_size=512):
-                    if chunk:
-                        video.write(chunk)
-                        total += 512
-                    print(f"{total/1024} kb so far\n")
+                video_name = os.path.join(REEL_FOLDER, f"{sys.argv[2]}.mp4")
+
+                with open(video_name, 'wb') as video:
+                    for chunk in video_response.iter_content(chunk_size=512):
+                        if chunk:
+                            video.write(chunk)
+                            total += 512
+                        print(f"{total/1024} kb so far\n")
+
+        except RequestException as err:
+            print("Error: Invalid URL")
+            
     else:
-        print("Error: Invalid name URL")
+        print("Error: Make sure the URL is a valid IG reel")
+
 else:
     print("Must pass two valid arguments: Reel URL, filename")

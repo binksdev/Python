@@ -16,7 +16,7 @@ TARGET_DIR = os.path.join(os.getcwd(), 'comic')
 def download_image(content, image_url):
     # Save the downloaded image in the target path
 
-    image_name = image_url.split('/')[-1] # The last element of the url contains the name of the image
+    image_name = image_url.split('/')[-1].replace('_','-').replace(' ', '-') # The last element of the url contains the name of the image
 
     image_path = os.path.join(TARGET_DIR, image_name)
 
@@ -54,7 +54,7 @@ if __name__ == '__main__':
         os.mkdir(TARGET_DIR)
 
     # The comic has a total of 256 pages so far
-    for n in range(0, 256):
+    for n in range(0, 260):
         # Validate if the comic page was downloaded previously
         if not os.path.exists(os.path.join(TARGET_DIR, f'Page-{n+1}.png')):
             get_img_source(n+1) # use n+1 because range is exclusive in the last value
